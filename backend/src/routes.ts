@@ -33,7 +33,6 @@ const upload = multer(uploadConfig.upload("./tmp"));
 
 // -- Rotas User --
 router.post("/users", new CreateUserController().handle);
-
 router.post("/login", new AuthUserController().handle);
 
 router.get("/userinfo", isAuthenticaded, new DetailUserController().handle);
