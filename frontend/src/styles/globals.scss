@@ -16,6 +16,7 @@
 
 	--gray-190: #8a8a8a;
 	--green-900: #3fffa3;
+	--green-950: #3fffa2c0;
 	--red-900: #ff3f4b;
 
 	--Poppins: "Poppins" sans-serif;
@@ -33,9 +34,6 @@ a {
 body {
 	background-color: var(--dark-700);
 	color: var(--red-900);
-	display: flex;
-	flex-direction: column;
-	align-items: center;
 }
 
 body,

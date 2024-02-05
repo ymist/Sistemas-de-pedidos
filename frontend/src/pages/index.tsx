@@ -13,22 +13,33 @@ import Link from "next/link";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
 
-import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext, AuthProvider } from "../contexts/AuthContext";
+import { toast } from "react-toastify";
+import { GetServerSideProps } from "next";
+import { canSSRGuest } from "../utils/canSSRGuest";
 
 export default function Page() {
-	const { signIn } = useContext(AuthContext);
-
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
 
+	const { signIn } = useContext(AuthContext);
+
 	async function handleLogin(event: FormEvent) {
 		event.preventDefault();
 
-		let credentials = {
+		if (email == "" || password == "") {
+			toast.warning("Preencha os campos!");
+			return;
+		}
+		setLoading(true);
+		const credentials = {
 			email,
 			password,
 		};
+		console.log(credentials);
+		await signIn(credentials);
+		setLoading(false);
 	}
 
 	return (
@@ -41,6 +52,7 @@ export default function Page() {
 					type="image/x-icon"
 				/>
 			</Head>
+
 			<div className={styles.containerCenter}>
 				<Image
 					src={logoImg}
@@ -62,7 +74,7 @@ export default function Page() {
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 						/>
-						<Button type="submit" loading={false}>
+						<Button type="submit" loading={loading}>
 							Entrar
 						</Button>
 						<Link className={styles.text} href="/signup">
@@ -74,3 +86,9 @@ export default function Page() {
 		</>
 	);
 }
+
+export const getServerSideProps = canSSRGuest(async (context) => {
+	return {
+		props: {},
+	};
+});
