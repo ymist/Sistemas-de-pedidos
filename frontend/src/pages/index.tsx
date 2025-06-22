@@ -13,9 +13,8 @@ import Link from "next/link";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
 
-import { AuthContext, AuthProvider } from "../contexts/AuthContext";
+import { AuthContext } from "../contexts/AuthContext";
 import { toast } from "react-toastify";
-import { GetServerSideProps } from "next";
 import { canSSRGuest } from "../utils/canSSRGuest";
 
 export default function Page() {
@@ -46,34 +45,15 @@ export default function Page() {
 		<>
 			<Head>
 				<title>Faça seu Login - Misty#8217;S</title>
-				<link
-					rel="shortcut icon"
-					href="../../public/favicon.ico"
-					type="image/x-icon"
-				/>
+				<link rel="shortcut icon" href="../../public/favicon.ico" type="image/x-icon" />
 			</Head>
 
 			<div className={styles.containerCenter}>
-				<Image
-					src={logoImg}
-					width="350"
-					height="370"
-					alt="Logo Misty's"
-				/>
+				<Image src={logoImg} width="350" height="370" alt="Logo Misty's" />
 				<div className={styles.login}>
 					<form onSubmit={(e) => handleLogin(e)}>
-						<Input
-							placeholder="Digite Seu Email"
-							type="text"
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-						/>
-						<Input
-							placeholder="Digite Sua Senha"
-							type="password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-						/>
+						<Input placeholder="Digite Seu Email" type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+						<Input placeholder="Digite Sua Senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
 						<Button type="submit" loading={loading}>
 							Entrar
 						</Button>

@@ -4,12 +4,32 @@ import { Header } from "../../components/Header";
 import { canSSRAuth } from "../../utils/canSSRAuth";
 
 import { FiUpload } from "react-icons/fi";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 
-export default function Product() {
+import { setupAPIClient } from "../../services/api";
+import { api } from "../../services/apiClient";
+import { toast } from "react-toastify";
+
+type ItemProps = {
+	id: string;
+	name: string;
+};
+
+interface CategoryProps {
+	category_list: ItemProps[];
+}
+
+export default function Product({ category_list }: CategoryProps) {
+	console.log(category_list);
 	const [avatarUrl, setAvatar] = useState("");
 	const [imageUrl, setImageUrl] = useState(null);
+
+	const [categories, setCategories] = useState(category_list || []);
+	const [selectCategory, setSelectCategory] = useState(0);
+	const [name, setName] = useState("");
+	const [description, setDescription] = useState("");
+	const [price, setPrice] = useState("");
 
 	const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
 		if (!event.target.files) {
@@ -27,6 +47,47 @@ export default function Product() {
 		}
 	};
 
+	const handleRegister = async (e: FormEvent) => {
+		e.preventDefault();
+
+		try {
+			const data = new FormData();
+
+			if (
+				name === "" ||
+				price === "" ||
+				description === "" ||
+				categories[selectCategory].id === "none" ||
+				avatarUrl === null
+			) {
+				toast.warning("Preencha os Campos Corretamente");
+				return;
+			}
+
+			data.append("name", name);
+			data.append("price", price);
+			data.append("description", description);
+			data.append("file", imageUrl);
+			data.append("category_id", categories[selectCategory].id);
+
+			const apiClient = setupAPIClient();
+
+			await apiClient.post("/product", data);
+
+			toast.success("Produto Cadastrado com Sucesso");
+
+			setName("");
+			setPrice("");
+			setDescription("");
+			setAvatar("");
+			setImageUrl(null);
+			setSelectCategory(0);
+		} catch (err) {
+			toast.error("Erro ao cadastrar o produto!!!");
+			console.log(err);
+		}
+	};
+
 	return (
 		<>
 			<Head>
@@ -38,7 +99,7 @@ export default function Product() {
 				<main className={styles.container}>
 					<h1>Novo Produto</h1>
 
-					<form className={styles.form}>
+					<form className={styles.form} onSubmit={handleRegister}>
 						<label className={styles.label}>
 							<span>
 								<FiUpload size={38} color="#fff" />
@@ -60,23 +121,38 @@ export default function Product() {
 							)}
 						</label>
 
-						<select name="" id="">
-							<option>--none--</option>
-							<option>Bebida</option>
+						<select
+							value={selectCategory}
+							onChange={(e) =>
+								setSelectCategory(Number(e.target.value))
+							}>
+							{categories.map((item, index) => {
+								return (
+									<option key={item.id} value={index}>
+										{item.name}
+									</option>
+								);
+							})}
 						</select>
 						<input
 							type="text"
+							value={name}
 							placeholder="Digite o Nome do Produto"
 							className={styles.input}
+							onChange={(e) => setName(e.target.value)}
 						/>
 						<input
 							type="text"
+							value={price}
 							placeholder="Digite o Preco do Produto"
 							className={styles.input}
+							onChange={(e) => setPrice(e.target.value)}
 						/>
 						<textarea
+							value={description}
 							placeholder="Descreva o seu produto..."
 							className={styles.input}
+							onChange={(e) => setDescription(e.target.value)}
 						/>
 
 						<button type="submit" className={styles.buttonAdd}>
@@ -90,7 +166,16 @@ export default function Product() {
 }
 
 export const getServerSideProps = canSSRAuth(async (context) => {
+	const apiClient = setupAPIClient(context);
+
+	const response = await apiClient.get("/category");
+	const categories = response.data;
+
+	categories.unshift({ id: "none", name: "--none--" });
+
 	return {
-		props: {},
+		props: {
+			category_list: categories,
+		},
 	};
 });

@@ -1,0 +1,80 @@
+.container {
+	max-width: 720px;
+	margin: 4rem auto;
+	padding: 0 2rem;
+
+	display: flex;
+	flex-direction: column;
+
+	h1 {
+		color: var(--white);
+	}
+}
+
+.containerHeader {
+	display: flex;
+	flex-direction: row;
+
+	button {
+		background: transparent;
+		border: 0;
+		margin-left: 2rem;
+
+		svg:hover {
+			animation: animate 0.5s reverse;
+		}
+	}
+}
+
+.listOrders {
+	display: flex;
+	flex-direction: column;
+	margin: 1rem 0;
+}
+
+.orderItem {
+	display: flex;
+	flex-direction: row;
+	background-color: var(--dark-900);
+	margin-bottom: 1rem;
+	align-items: center;
+	border-radius: 0.3rem;
+
+	transition: transform, opacity, 0.3s;
+	&:hover {
+		transform: scale(1.03);
+		opacity: 0.8;
+	}
+	button {
+		display: flex;
+		border: 0;
+		background-color: transparent;
+		font-size: 1.2rem;
+		color: var(--white);
+		align-items: center;
+		height: 60px;
+	}
+}
+
+.tag {
+	width: 9px;
+	height: 60px;
+	background-color: var(--green-900);
+	border-radius: 6px 0 0 6px;
+	margin-right: 1rem;
+}
+
+.emptyList {
+	color: var(--gray-190);
+	font-size: 1.3rem;
+	font-weight: 100;
+}
+
+@keyframes animate {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
